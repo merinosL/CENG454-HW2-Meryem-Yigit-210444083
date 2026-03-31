@@ -5,9 +5,9 @@ using TMPro;
 public class FlightExamManager : MonoBehaviour
 {
     [SerializeField] private TMP_Text warningText;
+    [SerializeField] private TMP_Text countdownText;
     [SerializeField] private MissileController missile;
     [SerializeField] private Transform playerPlane;
-    [SerializeField] private float missileDelay = 5f;
 
     private bool isThreatActive = false;
     private Coroutine launchCoroutine;
@@ -15,6 +15,7 @@ public class FlightExamManager : MonoBehaviour
     void Start()
     {
         HideWarning();
+        HideCountdown();
         if (missile != null)
         {
             missile.gameObject.SetActive(false);
@@ -37,6 +38,7 @@ public class FlightExamManager : MonoBehaviour
     {
         isThreatActive = false;
         HideWarning();
+        HideCountdown();
 
         if (launchCoroutine != null)
         {
@@ -52,7 +54,17 @@ public class FlightExamManager : MonoBehaviour
 
     private IEnumerator LaunchSequence()
     {
-        yield return new WaitForSeconds(missileDelay);
+        countdownText.gameObject.SetActive(true);
+        int timeLeft = 5;
+
+        while (timeLeft > 0)
+        {
+            countdownText.text = timeLeft.ToString();
+            yield return new WaitForSeconds(1f);
+            timeLeft--;
+        }
+
+        HideCountdown();
 
         if (isThreatActive && missile != null && playerPlane != null)
         {
@@ -63,17 +75,16 @@ public class FlightExamManager : MonoBehaviour
 
     private void ShowWarning()
     {
-        if (warningText != null)
-        {
-            warningText.gameObject.SetActive(true);
-        }
+        if (warningText != null) warningText.gameObject.SetActive(true);
     }
 
     private void HideWarning()
     {
-        if (warningText != null)
-        {
-            warningText.gameObject.SetActive(false);
-        }
+        if (warningText != null) warningText.gameObject.SetActive(false);
+    }
+
+    private void HideCountdown()
+    {
+        if (countdownText != null) countdownText.gameObject.SetActive(false);
     }
 }

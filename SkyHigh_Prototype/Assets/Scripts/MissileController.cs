@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class MissileController : MonoBehaviour
 {
-    [SerializeField] private float speed = 15f;
+    [SerializeField] private float chaseSpeed = 50f;
+    [SerializeField] private float followSpeed = 20f;
+    [SerializeField] private float slowDownDistance = 35f;
     [SerializeField] private float followDistance = 15f;
     
     private Transform target;
@@ -22,9 +24,12 @@ public class MissileController : MonoBehaviour
 
         transform.LookAt(target);
 
-        if (Vector3.Distance(transform.position, target.position) > followDistance)
+        float distance = Vector3.Distance(transform.position, target.position);
+        float currentSpeed = distance > slowDownDistance ? chaseSpeed : followSpeed;
+
+        if (distance > followDistance)
         {
-            transform.position = Vector3.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, target.position, currentSpeed * Time.deltaTime);
         }
     }
 
