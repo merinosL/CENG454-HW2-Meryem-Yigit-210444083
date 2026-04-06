@@ -12,10 +12,8 @@ public class MissileLauncher : MonoBehaviour
     {
         if (activeMissile != null) Destroy(activeMissile);
 
-        // Füzeyi yoktan var et (Spawnla)
         activeMissile = Instantiate(missilePrefab, launchPoint.position, launchPoint.rotation);
         
-        // EĞER PREFAB GİZLİ (KAPALI) KAYDEDİLDİYSE, ZORLA GÖRÜNÜR VE AKTİF YAP!
         activeMissile.SetActive(true);
         
         MissileController controller = activeMissile.GetComponent<MissileController>();
