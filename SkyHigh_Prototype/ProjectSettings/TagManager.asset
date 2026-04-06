@@ -6,6 +6,9 @@ TagManager:
   tags:
   - DangerZone
   - Obstacle
+  - Terrain
+  - TakeoffArea
+  - LandingArea
   layers:
   - Default
   - TransparentFX

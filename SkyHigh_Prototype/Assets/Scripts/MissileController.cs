@@ -3,9 +3,9 @@ using UnityEngine;
 public class MissileController : MonoBehaviour
 {
     [SerializeField] private float chaseSpeed = 50f;
-    [SerializeField] private float followSpeed = 20f;
-    [SerializeField] private float slowDownDistance = 35f;
-    [SerializeField] private float followDistance = 15f;
+    [SerializeField] private float followSpeed = 25f;
+    [SerializeField] private float slowDownDistance = 10f;
+    [SerializeField] private float followDistance = 0.5f;
     
     private Transform target;
     private bool isActive = false;

@@ -51,9 +51,10 @@
   <ItemGroup>
     <Compile Include="Assets/Scripts/DangerZoneController.cs" />
     <Compile Include="Assets/Scenes/FlightController.cs" />
-    <Compile Include="Assets/Scripts/GravityHandler.cs" />
+    <Compile Include="Assets/Scripts/AircraftThreatHandler.cs" />
     <Compile Include="Assets/TutorialInfo/Scripts/Readme.cs" />
-    <Compile Include="Assets/Scripts/SpeedHandler.cs" />
+    <Compile Include="Assets/Scripts/AircraftFlightController.cs" />
+    <Compile Include="Assets/Scripts/LandingAreaController.cs" />
     <Compile Include="Assets/Scripts/FlightExamManager.cs" />
     <Compile Include="Assets/Scripts/MissileController.cs" />
   </ItemGroup>
