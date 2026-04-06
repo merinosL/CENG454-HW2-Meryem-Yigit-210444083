@@ -97,6 +97,9 @@ public class FlightExamManager : MonoBehaviour
                     rb.isKinematic = true;
                 }
             }
+
+            // GÖREV BAŞARILI: 5 saniye sonra sahneyi yeniden yükle
+            StartCoroutine(RestartLevelSuccess());
         }
     }
 
@@ -104,7 +107,6 @@ public class FlightExamManager : MonoBehaviour
     {
         if (isGameOver) return;
 
-        // Uyarıları hemen gizle
         HideWarning();
         HideCountdown();
         if (warningAudio != null && warningAudio.isPlaying) warningAudio.Stop();
@@ -116,16 +118,16 @@ public class FlightExamManager : MonoBehaviour
 
         if (gameOverText != null) gameOverText.gameObject.SetActive(true);
 
-        // Füze aktifse hiçbir şey yapma (ses çalma, baştan başlatma), bekle!
+        // FÜZE AKTİFSE HIZLANDIR VE BEKLE!
         if (missile != null && missile.gameObject.activeInHierarchy)
         {
             isWaitingForMissile = true;
+            missile.Enrage(); 
         }
         else
         {
-            // Füze yoksa normal Game Over sürecini işlet
             isGameOver = true;
-            if (crashAudio != null) crashAudio.Play();
+            // Füze yoksa direkt yeniden başlat (GameOver süresiyle)
             StartCoroutine(RestartLevel());
         }
     }
@@ -150,14 +152,23 @@ public class FlightExamManager : MonoBehaviour
         if (gameOverText != null) gameOverText.gameObject.SetActive(true);
         
         if (crashAudio != null) crashAudio.Play();
+        
         if (missile != null) missile.gameObject.SetActive(false);
 
         StartCoroutine(RestartLevel());
     }
 
+    // Başarısızlık durumunda 3 saniye bekler
     private IEnumerator RestartLevel()
     {
         yield return new WaitForSeconds(3f);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    // BAŞARI DURUMUNDA 5 saniye bekler
+    private IEnumerator RestartLevelSuccess()
+    {
+        yield return new WaitForSeconds(5f);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
