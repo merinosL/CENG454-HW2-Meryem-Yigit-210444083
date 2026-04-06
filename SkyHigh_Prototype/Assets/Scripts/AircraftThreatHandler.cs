@@ -8,7 +8,8 @@ public class AircraftThreatHandler : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Terrain"))
         {
-            CrashSequence();
+            FreezePlane();
+            if (examManager != null) examManager.HandleTerrainCrash();
         }
     }
 
@@ -16,27 +17,22 @@ public class AircraftThreatHandler : MonoBehaviour
     {
         if (other.CompareTag("Obstacle"))
         {
-            CrashSequence();
+            FreezePlane();
+            if (examManager != null) examManager.TriggerGameOver();
         }
     }
 
-    private void CrashSequence()
+    private void FreezePlane()
     {
         AircraftFlightController flightController = GetComponent<AircraftFlightController>();
-        if (flightController != null)
-        {
-            flightController.enabled = false;
-        }
+        if (flightController != null) flightController.enabled = false;
 
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
             rb.isKinematic = true;
-        }
-
-        if (examManager != null)
-        {
-            examManager.TriggerGameOver();
         }
     }
 }

@@ -23,6 +23,7 @@ public class FlightExamManager : MonoBehaviour
     private bool isThreatActive = false;
     private bool threatCleared = false;
     private bool isGameOver = false;
+    private bool isWaitingForMissile = false;
     private Coroutine launchCoroutine;
 
     void Start()
@@ -40,7 +41,7 @@ public class FlightExamManager : MonoBehaviour
 
     public void EnterDangerZone()
     {
-        if (isGameOver) return;
+        if (isGameOver || isWaitingForMissile) return;
 
         isThreatActive = true;
         ShowWarning();
@@ -53,7 +54,7 @@ public class FlightExamManager : MonoBehaviour
 
     public void ExitDangerZone()
     {
-        if (isGameOver) return;
+        if (isGameOver || isWaitingForMissile) return;
 
         isThreatActive = false;
         threatCleared = true;
@@ -76,12 +77,11 @@ public class FlightExamManager : MonoBehaviour
 
     public void AttemptLanding()
     {
-        if (isGameOver) return;
+        if (isGameOver || isWaitingForMissile) return;
 
         if (threatCleared)
         {
             if (missionCompleteText != null) missionCompleteText.gameObject.SetActive(true);
-            
             if (successAudio != null && !successAudio.isPlaying) successAudio.Play();
 
             if (playerPlane != null)
@@ -100,17 +100,46 @@ public class FlightExamManager : MonoBehaviour
         }
     }
 
+    public void HandleTerrainCrash()
+    {
+        if (isGameOver) return;
+
+        // Uyarıları hemen gizle
+        HideWarning();
+        HideCountdown();
+        if (warningAudio != null && warningAudio.isPlaying) warningAudio.Stop();
+        if (launchCoroutine != null)
+        {
+            StopCoroutine(launchCoroutine);
+            launchCoroutine = null;
+        }
+
+        if (gameOverText != null) gameOverText.gameObject.SetActive(true);
+
+        // Füze aktifse hiçbir şey yapma (ses çalma, baştan başlatma), bekle!
+        if (missile != null && missile.gameObject.activeInHierarchy)
+        {
+            isWaitingForMissile = true;
+        }
+        else
+        {
+            // Füze yoksa normal Game Over sürecini işlet
+            isGameOver = true;
+            if (crashAudio != null) crashAudio.Play();
+            StartCoroutine(RestartLevel());
+        }
+    }
+
     public void TriggerGameOver()
     {
         if (isGameOver) return;
         
         isGameOver = true;
+        isWaitingForMissile = false;
 
-        if (warningText != null) warningText.gameObject.SetActive(false);
-        if (countdownText != null) countdownText.gameObject.SetActive(false);
+        HideWarning();
+        HideCountdown();
         if (warningAudio != null && warningAudio.isPlaying) warningAudio.Stop();
-
-        if (crashAudio != null) crashAudio.Play();
 
         if (launchCoroutine != null)
         {
@@ -119,6 +148,10 @@ public class FlightExamManager : MonoBehaviour
         }
 
         if (gameOverText != null) gameOverText.gameObject.SetActive(true);
+        
+        if (crashAudio != null) crashAudio.Play();
+        if (missile != null) missile.gameObject.SetActive(false);
+
         StartCoroutine(RestartLevel());
     }
 
@@ -142,7 +175,7 @@ public class FlightExamManager : MonoBehaviour
 
         HideCountdown();
 
-        if (isThreatActive && missile != null && playerPlane != null && !isGameOver)
+        if (isThreatActive && missile != null && playerPlane != null && !isGameOver && !isWaitingForMissile)
         {
             missile.gameObject.SetActive(true);
             missile.ActivateMissile(playerPlane);
